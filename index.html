@@ -1,27 +1,101 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <script src="jquery.js"></script>
     <script src="dataGenerator.js"></script>
+
   </head>
+
+
   <body>
+
     <script>
 
-      $(document).ready(function(){
+      $(document).ready(function() {
+
+        // Function to generate (currentTime) a (tweet) was modified
+        var timestamp = function() {
+          var date = new Date();
+          var strTime = date;
+          return strTime;
+        };
+
+
+        // <body> element
         var $body = $('body');
+
+        // Change (tag) of <body> elem to (emtpy string)
         $body.html('');
 
+        // (Index) of the (last tweet) of the (followed users)
         var index = streams.home.length - 1;
-        while(index >= 0){
+
+        // (!) Currently working - Testing~
+        // Iterate thru (folllowed users s' tweets) obj
+        while(index >= 0) {
+
+          // Generate a (new tweet) with (timestamp) after every (1 sec)
+          setInterval(function() {
+            generateNewTweets();
+          },1000);
+
+          setInterval();
+        }
+
+        function getPastTweets(currentUserTweets) {
+
+          let pastTweets = [];
+
+          for (let i = 0; i < currentUserTweets.length; i++) {
+            var currentTweetMessage = currentUserTweets[i].message;
+            pastTweets.push(currentTweetMessage);
+          }
+          return pastTweets;
+        }
+
+        // (!) Currently working
+        function generateNewTweets() {
+
+          // Current tweetObj
           var tweet = streams.home[index];
+
+          // Current <div> element
           var $tweet = $('<div></div>');
+
+          // Generate (time) & (newLine) for (currentTweet)
+          var time = timestamp();
+
+          // Generate newLine between (each tweet)
+          var newLine = $('<br></br>');
+
+          // Create <p> elem for currenTime
+          var currentTime = $('<div></div>');
+          currentTime.text(time);
+
+          // Create timeline button for each user
+          var currentUserHistory = $('<div></div>');
+          var historyButton = $('<button></button>');
+          historyButton.text('Timeline');
+          historyButton.appendTo(currentUserHistory);
+
+          // Add (current) (tweetObj)'s (username) & (message) to
+          //..current <div> (element)'s (content)
           $tweet.text('@' + tweet.user + ': ' + tweet.message);
+
+          // Attach current (tweet) & (timestap) & (newLine) to <body>
           $tweet.appendTo($body);
+          currentTime.appendTo($body);
+          currentUserHistory.appendTo($body);
+          newLine.appendTo($body);
+
+          // next tweetObj
           index -= 1;
         }
 
       });
 
     </script>
+
   </body>
 </html>
