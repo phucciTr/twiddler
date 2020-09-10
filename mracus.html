@@ -41,6 +41,7 @@
         function generateNewTweets() {
 
           let name = mracusTweets[index].user;
+          let tweetMessage = mracusTweets[index].message;
           let currentTime = timestamp();
           let timeLinePath = name + '.html';
 
@@ -58,7 +59,7 @@
           userName.appendTo(tweet);
 
           var userTweet = $('<div></div>');
-          userTweet.text(tweet.message);
+          userTweet.text(tweetMessage);
           userTweet.appendTo(tweet);
 
           // Appending

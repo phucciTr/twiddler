@@ -45,6 +45,7 @@
 
 
           var tweet = $('<div></div>');
+          let tweetMessage = shawndrostTweets[index].message;
           tweet.attr = ('id', name);
 
           var newLine = $('<br></br>');
@@ -55,10 +56,10 @@
           userName.attr('class', name);
           userName.attr('href', timeLinePath);
           userName.text('@' + name + ': ' );
-          userName.appendTo(tweet);
+          userName.appendTo(tweetMessage);
 
           var userTweet = $('<div></div>');
-          userTweet.text(tweet.message);
+          userTweet.text(tweetMessage);
           userTweet.appendTo(tweet);
 
           // Appending

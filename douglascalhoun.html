@@ -43,6 +43,7 @@
         function generateNewTweets() {
 
           let name = douglascalhounTweets[index].user;
+          let tweetMessage = douglascalhounTweets[index].message;
           let currentTime = timestamp();
           let timeLinePath = name + '.html';
 
@@ -61,7 +62,7 @@
           userName.appendTo(tweet);
 
           var userTweet = $('<div></div>');
-          userTweet.text(tweet.message);
+          userTweet.text(tweetMessage);
           userTweet.appendTo(tweet);
 
           // Appending
