@@ -2,8 +2,8 @@
 <html>
 
   <head>
-    <script src="jquery.js"></script>
-    <script src="dataGenerator.js"></script>
+    <script src="../jquery.js"></script>
+    <script src="../dataGenerator.js"></script>
 
   </head>
 
@@ -28,11 +28,9 @@
         var $body = $('body');
 
         var homePath = index.html;
-        var home = $('<a href=index.html></a>');
+        var home = $('<a href=../index.html> </a>');
         home.text('Home Page');
         home.appendTo($body);
-
-
 
 
         while(index >= 0) {
@@ -72,6 +70,10 @@
           tweet.appendTo($body);
 
           index -= 1;
+
+          if (index >= 0) {
+            return generateNewTweets();
+          }
 
         }
 

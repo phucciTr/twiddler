@@ -26,6 +26,7 @@
 
         console.log(window.streams);
         console.log(streams.users);
+        console.log(window.streams.home);
 
         // Change (tag) of <body> elem to (emtpy string)
         $body.html('');
@@ -39,26 +40,29 @@
 
           // Generate a (new tweet) with (timestamp) after every (1 sec)
           setInterval(function() {
-
             generateNewTweets();
 
           },1000);
 
           setInterval();
+
         }
 
         // (!) Currently working
         function generateNewTweets() {
 
+          if (index === 0) {
+            return index = streams.home.length - 1;
+          }
+
           // Current tweetObj
-          var tweet = streams.home[index];
+          let tweet = streams.home[index];
 
           // Current user's name
-          var currentUser = tweet.user;
+          let currentUser = tweet.user;
 
           // Current <div> element
           var $tweet = $('<div></div>'); // Working
-          // var $tweet = $('<a></a>'); // Testing
           $tweet.attr('id', currentUser);
 
           // Generate newLine between (each tweet)
@@ -66,11 +70,11 @@
 
           // Generate (time) & (newLine) for (currentTweet)
           // Create <p> elem for currenTime
-          var time = timestamp();
+          let time = timestamp();
           var currentTime = $('<div></div>');
           currentTime.text(time);
 
-          let timeLinePath = tweet.user + '.html';
+          let timeLinePath = 'TimeLines/' + tweet.user + '.html';
 
           var userName = $('<a></a>');
           userName.attr('class', currentUser);
@@ -90,7 +94,6 @@
           // next tweetObj
           index -= 1;
         }
-
 
       });
 

@@ -2,8 +2,8 @@
 <html>
 
   <head>
-    <script src="jquery.js"></script>
-    <script src="dataGenerator.js"></script>
+    <script src="../jquery.js"></script>
+    <script src="../dataGenerator.js"></script>
 
   </head>
 
@@ -21,17 +21,17 @@
           return strTime;
         };
 
-        var mracusTweets = streams.users.mracus;
-        var index = mracusTweets.length -1;
+        var shawndrostTweets = streams.users.shawndrost;
+        var index = shawndrostTweets.length -1;
 
         // <body> element
         var $body = $('body');
 
+
         var homePath = index.html;
-        var home = $('<a href=index.html></a>');
+        var home = $('<a href=../index.html></a>');
         home.text('Home Page');
         home.appendTo($body);
-
 
         while(index >= 0) {
           generateNewTweets();
@@ -39,13 +39,13 @@
 
         // (!) Currently working
         function generateNewTweets() {
-
-          let name = mracusTweets[index].user;
-          let tweetMessage = mracusTweets[index].message;
+          let name = shawndrostTweets[index].user;
           let currentTime = timestamp();
           let timeLinePath = name + '.html';
 
+
           var tweet = $('<div></div>');
+          let tweetMessage = shawndrostTweets[index].message;
           tweet.attr = ('id', name);
 
           var newLine = $('<br></br>');
