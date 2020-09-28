@@ -1,103 +1,197 @@
 <!DOCTYPE html>
 <html>
-
   <head>
+
     <script src="jquery.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"> </script>
     <script src="dataGenerator.js"></script>
+    <link rel="stylesheet" href="styles/main.css">
 
   </head>
-
-
   <body>
-
     <script>
 
       $(document).ready(function() {
 
-        // Function to generate (currentTime) a (tweet) was modified
-        var timestamp = function() {
-          var date = new Date();
-          var strTime = date;
-          return strTime;
-        };
+        // Start of <body>
+        let $body = $('body');
+        let homePage = $('<h1 id="home"> Twiddler </h1>')
+        let tweetBox = $('<div id="tweetBox"> </div>');
+        let guestTweetBox = $('<div id="guestBox"> </div>');
+        let guestTweetInput = $('<input id="guestInput"> </input>');
+        let guestNameInput = $('<input id="guestName" value="Name"></input>');
+        let timelineBox = $('<div id="historyBox"></div>');
+        let timelineUsername = $('<div id="timelineName"> </div>');
+        let backgroundMusic = $('<audio controls autoplay> <source src="TwiddlaParty.mp3" type="audio/mpeg"> </audio>');
+        let defaultInput = '______________________________';
+        guestTweetInput.val(defaultInput);
+        let isTimelineShowing = false;
+        let autoSchedule;
 
-        // <body> element
-        var $body = $('body');
+        backgroundMusic.hide();
 
-        console.log(window.streams);
-        console.log(streams.users);
-        console.log(window.streams.home);
-
-        // Change (tag) of <body> elem to (emtpy string)
+        // Appending
         $body.html('');
+        tweetBox.appendTo($body);
+        guestNameInput.appendTo(guestTweetBox);
+        guestTweetInput.appendTo(guestTweetBox);
+        guestTweetBox.prependTo($body);
+        homePage.prependTo($body);
+        backgroundMusic.appendTo($body);
 
-        // (Index) of the (last tweet) of the (followed users)
-        var index = streams.home.length - 1;
 
-        // (!) Currently working - Testing~
-        // Iterate thru (folllowed users s' tweets) obj
-        while(index >= 0) {
+        // Setting up event handlers
+        homePage.on({
+          mouseenter: function() {
+            $(this).css('cursor', 'pointer');
+          },
+          click: function() {
+            isTimelineShowing = false;
+            tweetBox.slideUp(1000);
+            tweetBox.show('drop');
+            $('#historyBox').hide('slide', 1000);
+            $('#historyBox').html('');
+            scheduleTweets();
+          }
+        });
+        guestNameInput.on({
+          mouseenter: function() {
+            $(this).val('');
+          },
+          mouseleave: function() {
+            if ($(this).val() === '') {
+              $(this).val('Name');
+            }
+          }
+        });
+        guestTweetInput.on({
+          mouseenter: function() {
+            $(this).val('');
+          },
+          mouseleave: function() {
+            if ($(this).val() === '') {
+              $(this).val(defaultInput);
+            }
+          },
+          keyup: function(e) {
+            if (e.keyCode === 13) {
+              visitor = $('#guestName').val();
+              let inputTweet = $('#guestInput').val();
+              writeTweet(inputTweet);
+              $(this).val('');
+              $('#guestName').val('');
+              generateTweets();
+            }
+          }
+        });
 
-          // Generate a (new tweet) with (timestamp) after every (1 sec)
-          setInterval(function() {
-            generateNewTweets();
+        // Generate tweets
+        scheduleTweets();
 
-          },1000);
-
-          setInterval();
-
+        // Start of all functions definitions
+        function scheduleTweets() {
+          generateTweets();
+          if (!isTimelineShowing) { autoSchedule = setTimeout(scheduleTweets, getRandomInt(3, 4) * 1000); }
         }
 
-        // (!) Currently working
-        function generateNewTweets() {
+        function stopAutoSchedule() {
+          clearTimeout(autoSchedule);
+        }
 
-          if (index === 0) {
-            return index = streams.home.length - 1;
-          }
+        function getRandomInt(min, max) {
+          return Math.random() * (max - min) + min;
+        }
 
-          // Current tweetObj
-          let tweet = streams.home[index];
+        function generateTweets(currentUser) {
+          tweetBox.html('');
+          let allTweetObjects = streams.home;
+          if (!currentUser) { showAllTweets(allTweetObjects); }
+          if (currentUser) { showUserTimeline(currentUser); }
+        }
 
-          // Current user's name
-          let currentUser = tweet.user;
+        function showAllTweets(allTweetObjects) {
+          allTweetObjects.forEach(function(currentTweetObj) {
+            let currentTweetUserName = constructTweet(currentTweetObj);
+            currentTweetUserName.on({
+              mouseenter: function() {
+                $(this).css('cursor', 'pointer');
+              },
+              click: function() {
+                stopAutoSchedule();
+                isTimelineShowing = true;
+                let currentName = currentTweetObj.user;
+                let currentUserTimeLine = streams.users[currentName];
 
-          // Current <div> element
-          var $tweet = $('<div></div>'); // Working
-          $tweet.attr('id', currentUser);
+                // Setting up animations
+                tweetBox.hide('drop');
+                timelineBox.hide();
 
-          // Generate newLine between (each tweet)
-          var newLine = $('<br></br>');
+                // Construct timeline box
+                timelineUsername.text('@' + currentName);
+                timelineUsername.appendTo(timelineBox);
+                timelineBox.insertAfter(guestTweetBox);
 
-          // Generate (time) & (newLine) for (currentTweet)
-          // Create <p> elem for currenTime
-          let time = timestamp();
-          var currentTime = $('<div></div>');
-          currentTime.text(time);
+                // Animating
+                tweetBox.slideUp(1000);
+                tweetBox.show('clip');
+                timelineBox.show('scale', 1000);
 
-          let timeLinePath = 'TimeLines/' + tweet.user + '.html';
+                generateTweets(currentUserTimeLine);
+              }
+            });
+          });
+        }
 
-          var userName = $('<a></a>');
-          userName.attr('class', currentUser);
-          userName.attr('href', timeLinePath);
-          userName.text('@' + tweet.user + ': ' );
-          userName.appendTo($tweet);
+        function showUserTimeline(currentUser) {
+          currentUser.forEach(function(currentTweetObj) {
+            constructTweet(currentTweetObj);
+          });
+        }
 
-          var userTweet = $('<div></div>');
-          userTweet.text(tweet.message);
-          userTweet.appendTo($tweet);
+        function constructTweet(currentTweetObj) {
+          // Aliases
+          let currentName = currentTweetObj.user;
+          let currentTweetMsg = currentTweetObj.message;
+          let currentTweetCreatedTime = currentTweetObj.created_at;
+
+          // Define elements
+          let userTweet = $('<div class="tweet"> </div>');
+          let userBox = $('<div class="msgBox"> </div>');
+          let userName = $('<div class="userName"> </div>');
+          let tweetMessage = $('<div class="tweetMsg"> </div>');
+          let time = $('<div></div>');
+          let newLine = $('<br></br>');
+          let line = $('<hr class="line"></hr>');
+
+          // Construct elements s' content
+          userName.text('@' + currentName + ': ');
+          tweetMessage.text(currentTweetMsg);
+          time.text(currentTweetCreatedTime);
+
+          // Setting up animation effects
+          time.hide();
+          userName.hide();
 
           // Appending
-          currentTime.appendTo($tweet);
-          newLine.appendTo($tweet);
-          $tweet.prependTo($body);
+          line.appendTo(userBox);
+          userName.appendTo(userBox);
+          tweetMessage.appendTo(userBox);
+          time.appendTo(userBox);
+          newLine.appendTo(userBox);
+          userBox.appendTo(userTweet);
+          userTweet.prependTo(tweetBox);
 
-          // next tweetObj
-          index -= 1;
+          // Animating
+          tweetMessage.fadeToggle();
+          tweetMessage.show('fade');
+          time.show('slide');
+          userName.show('size');
+
+          return userName;
         }
-
       });
 
     </script>
-
   </body>
+
 </html>
